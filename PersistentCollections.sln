@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentCollections", "PersistentCollections\PersistentCollections.csproj", "{6DF6ECA3-ABE8-4B49-A045-6882813DB58B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersistentCollections.Tests", "PersistentCollections.Tests\PersistentCollections.Tests.csproj", "{9E899E92-DFB7-449F-81D4-A40E9E9552E1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6DF6ECA3-ABE8-4B49-A045-6882813DB58B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DF6ECA3-ABE8-4B49-A045-6882813DB58B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DF6ECA3-ABE8-4B49-A045-6882813DB58B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DF6ECA3-ABE8-4B49-A045-6882813DB58B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E899E92-DFB7-449F-81D4-A40E9E9552E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E899E92-DFB7-449F-81D4-A40E9E9552E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E899E92-DFB7-449F-81D4-A40E9E9552E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E899E92-DFB7-449F-81D4-A40E9E9552E1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
