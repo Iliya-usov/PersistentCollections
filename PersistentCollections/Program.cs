@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using PersistentCollections.Map;
+using PersistentCollections.Map2;
 
 namespace PersistentCollections;
 
@@ -33,7 +34,7 @@ public class Program
         Interlocked.MemoryBarrier();
         
         
-        var (persistentMap, immutableMap,map) = PersistentHashMapBuilder(10_000_000, false);
+        var (persistentMap, immutableMap,map, persistentMap2) = PersistentHashMapBuilder(10_000_000, false);
         var stopwatch = Stopwatch.StartNew();
         for (int i = 0; i < 3; i++)
         {
@@ -41,8 +42,42 @@ public class Program
         }
         Console.WriteLine($"Total memory: {(GC.GetTotalMemory(true) - initialMemory) / (1024.0 * 1024.0):F2} MB");
 
+        var list = new List<PersistentHashMap2<int, int>>() { persistentMap2 };
+        for (int i = 0; i < 1000; i++)
+        {
+            persistentMap2 = persistentMap2.Remove(i);
+            persistentMap2 = persistentMap2.Add(i, i);
+        
+            list.Add(persistentMap2);
+        }
+        
+        // var list = new List<PersistentHashMap<int, int>>() { persistentMap };
+        // for (int i = 0; i < 1000; i++)
+        // {
+        //     persistentMap = persistentMap.Remove(i);
+        //     persistentMap = persistentMap.Add(i, i);
+        //
+        //     list.Add(persistentMap);
+        // }
+        
+        // var list = new List<ImmutableDictionary<int, int>>() { immutableMap };
+        // for (int i = 0; i < 1000; i++)
+        // {
+        //     immutableMap = immutableMap.Remove(i);
+        //     immutableMap = immutableMap.Add(i, i);
+        //
+        //     list.Add(immutableMap);
+        // }
+        
+        for (int i = 0; i < 3; i++)
+        {
+            DoGC();
+        }
+        Console.WriteLine($"Total memory2: {(GC.GetTotalMemory(true) - initialMemory) / (1024.0 * 1024.0):F2} MB");
+
         Console.WriteLine($"GC took: {stopwatch.ElapsedMilliseconds}ms");
-        DoTestEnumeration(persistentMap, immutableMap);
+        // Thread.Sleep(100_000);
+        DoTestEnumeration(persistentMap, immutableMap, persistentMap2);
         GC.KeepAlive(map);
 
         void DoGC()
@@ -58,14 +93,15 @@ public class Program
     {
         for (int i = 0; i < 1000; i++)
         {
-            var (persistentMapBuilder, immutableMapBuilder, _) = PersistentHashMapBuilder(100, true);
+            var (persistentMapBuilder, immutableMapBuilder, _, persistentMapBuilder2) = PersistentHashMapBuilder(100, true);
             persistentMapBuilder.ToList();
             immutableMapBuilder.ToList();
+            persistentMapBuilder2.ToList();
         }
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static (PersistentHashMap<int, int> persistentMapBuilder, ImmutableDictionary<int, int> immutableMapBuilder, IDictionary<int, int>) PersistentHashMapBuilder(int n, bool warmup)
+    private static (PersistentHashMap<int, int> persistentMapBuilder, ImmutableDictionary<int, int> immutableMapBuilder, IDictionary<int, int>, PersistentHashMap2<int, int> persistentMapBuilder2) PersistentHashMapBuilder(int n, bool warmup)
     {
         Print("start", warmup);
         var random = new Random(42);
@@ -73,6 +109,7 @@ public class Program
         Print("array", warmup);
             
         var persistentMapBuilder = PersistentHashMap<int, int>.Empty.ToBuilder();
+        var persistentMapBuilder2 = PersistentHashMap2<int, int>.Empty.ToBuilder();
         var immutableMapBuilder = ImmutableDictionary<int, int>.Empty.ToBuilder();
 
         // var map = new Dictionary<int, int>();
@@ -83,12 +120,18 @@ public class Program
         for (int i = 0; i < n; i++)
         {
             // persistentMapBuilder[array[i]] = array[i];
+            // persistentMapBuilder2[array[i]] = array[i];
+
+            // if (!persistentMapBuilder2.TryGetValue(array[i], out var v) || v != array[i])
+            // {
+            //     Console.WriteLine();
+            // }
             immutableMapBuilder[array[i]] = array[i];
                 
             // map[array[i]] = array[i];
         }
 
-        var r = (persistentMapBuilder.Build(), immutableMapBuilder.ToImmutable(), map);
+        var r = (persistentMapBuilder.Build(), immutableMapBuilder.ToImmutable(), map, persistentMapBuilder2.Build());
         Print($"build finished: {stopwatch.ElapsedMilliseconds} ms", warmup);
 
         return r;
@@ -101,9 +144,10 @@ public class Program
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static void DoTestEnumeration(PersistentHashMap<int, int> persistentMap, ImmutableDictionary<int, int> immutableMap)
+    private static void DoTestEnumeration(PersistentHashMap<int, int> persistentMap, ImmutableDictionary<int, int> immutableMap, PersistentHashMap2<int, int> persistentMap2)
     {
         GC.KeepAlive(persistentMap);
+        GC.KeepAlive(persistentMap2);
         GC.KeepAlive(immutableMap);
         return;
             

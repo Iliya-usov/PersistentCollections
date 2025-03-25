@@ -107,6 +107,8 @@ internal sealed class IndexNode<TKey, TValue>(Bitmap bitmap, IndexNodes<Node<TKe
         var newNodes = Nodes.ImmutableRemove(SharedPool, nodeIndex);
         if (IsMutable)
         {
+          SharedPool.Return(Nodes.Raw);
+          
           Nodes = newNodes;
           myBitmap = newBitmap;
           return this;

@@ -16,6 +16,6 @@ internal abstract class Node<TKey, TValue>(bool isFrozen)
   public abstract Node<TKey, TValue>? Remove(Hash hash, Shift shift, in RemoveArgs<TKey, TValue> args, out int countDiff);
 
   public abstract int CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex);
-  
+
   public abstract void Freeze();
 }
